@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ATC Contact Page</title>
+    <link rel="stylesheet"
+    href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+    integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+    <style>
+        table{
+            table-layout: fixed;
+            width: 95%;
+            position: absolute;
+            margin-left: 1%;
+            margin-top: 2%;
+            text-align: center;
+            border:3px solid #1c7430;
+
+        }
+        @media (min-width: 700px) {
+            table{
+            table-layout: auto;
+            width: 100%;
+            position: absolute;
+                height: auto;
+            margin-left: 1%;
+            margin-top: 5%;
+            text-align: center;
+            border:3px solid #1c7430;
+
+        }
+        }
+    </style>
+</head>
+<script>
+</script>
+<body>
+<nav class="navbar navbar-light" style="background-color:#49c5b6">
+    <a class="navbar-brand" style="color: white;position: center;left: 30%">
+      You Can find the Information about the members of this club.
+    </a>
+  </nav>
+<table border="1" colspan="15px">
+    <tr>
+        <th>Name</th>
+        <th>Roll No.</th>
+        <th>Mobile</th>
+        <th width="400px">Email</th>
+        <th>Type of Member</th>
+    </tr>
+    {% for c in con %}
+    <tr>
+        <td>{{c.name}}</td>
+        <td>{{c.roll_no}}</td>
+        <td ><a href="tel:{{ c.mob }}">{{c.mob}}</a></td>
+        <td><a href="mailto:{{ c.mail }}">{{c.mail}}</a></td>
+        <td>{{c.type}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

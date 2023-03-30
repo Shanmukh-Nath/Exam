@@ -1,0 +1,184 @@
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome</title>
+    <link rel="icon" href="{% static 'img/logo.png' %}" type="image/icon">
+  <link rel="stylesheet"
+    href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+    integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+</head>
+<script>
+</script>
+<body>
+  <style>
+    * {
+
+      font-family: "Playfair Display";
+      color: black;
+
+    }
+
+    .main {
+      padding-left: 3%;
+        z-index: 1;
+        display: grid;
+      /* grid-template-columns: 45% auto; */
+
+    }
+
+    .abt {
+      margin-top: 200px;
+      padding-right: 3%;
+      width: 95%;
+      /* border: solid 2px red ; */
+
+    }
+    #co{
+        position: absolute;
+        left:90%;
+        text-align: center;
+        font-size: 1.25em;
+        color: white;
+
+
+    }
+    #co1{
+        position: absolute;
+        left:80%;
+        text-align: center;
+        font-size: 1.25em;
+        color: white;
+
+
+    }
+    button {
+      margin: 1em;
+      margin-left: 5em;
+    }
+
+    img {
+      position: absolute;
+      top: 4em;
+      left: -10px;
+      height: 12em;
+      width: 100%;
+        z-index: 0;
+      /* transition: all 0.3s ease-in-out; */
+    }
+    h1{
+        position: center;
+        left: 50%;
+    }
+
+    .prof button[type=submit] {
+      background-color: #2EE59D;
+      color: #fff;
+
+    }
+    .prof button[type=submit]:hover {
+      background-color: #2EE59D;
+      box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+      color: #fff;
+      transform: translateY(-7px);
+
+    }
+    .student button[type=submit] {
+      background-color: #5eadee;
+      color: #fff;
+
+    }
+
+    .student button[type=submit]:hover {
+      background-color: #5eadee;
+      box-shadow: 0px 15px 20px rgba(4, 112, 139, 0.4);
+      color: #fff;
+      transform: translateY(-7px);
+
+    }
+    @media (max-width: 700px){
+        body{
+            background-image:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4),rgba(0,0,0,0.4),rgba(0,0,0,0.4)) ,url("{% static 'img/background/waterfalls.svg' %}");
+            background-size: 65vh;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+        .navbar{
+            display: block;
+            width: auto;
+        }
+        img {
+      position: absolute;
+      top: 4em;
+      left: -10px;
+      height: 5em;
+      width: 100%;
+        z-index: 0;
+      /* transition: all 0.3s ease-in-out; */
+    }
+        h1{
+            font-size: 2em;
+        }
+        #co{
+        position: absolute;
+        left:70%;
+        text-align: center;
+        font-size: 1.25em;
+        color: white;
+
+
+    }
+    #co1{
+        position: absolute;
+        left:50%;
+        text-align: center;
+        font-size: 1.25em;
+        color: white;
+
+
+    }
+    }
+  </style>
+  <nav class="navbar navbar-light" style="background-color:#49c5b6">
+    <a class="navbar-brand" style="color: white; padding-left: 1em;" href="{% url 'homepage' %}">
+      Welcome
+    </a>
+      <a id="co1" target="_blank" class="navbar-brand" href="{% url 'gal' %}">Gallery</a>
+      <a id="co" target="_blank" class="navbar-brand" href="{% url 'contact' %}">Contact Us</a>
+  </nav>
+  <div class="main">
+    <div class="abt">
+      <h1><u>Alan Turing Club Portal</u></h1>
+        <div class="student">
+        <h2>Student Section: </h2>
+        <div class="row">
+          <form method="get" action="{% url 'login' %}">
+            <button type="submit" class="btn btn-raised btn-lg" style="color: #202027">Login</button>
+          </form>
+          <form method="get" action="{% url 'register' %}">
+            <button type="submit" class="btn btn-raised btn-lg" style="color: #202027">Signup</button>
+          </form>
+        </div>
+      </div>
+      <div class="prof">
+        <h2>Professor Section: </h2>
+        <div class="row">
+          <form method="get" action="{% url 'faculty-login' %}">
+            <button type="submit" class="btn btn-raised btn-lg" style="color: #202027">Login</button>
+          </form>
+          <form method="get" action="{% url 'faculty-register' %}">
+            <button type="submit" class="btn btn-raised btn-lg" style="color: #202027">Signup</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="img">
+      <!-- <img src="{% static 'img/ems.jpg' %}" alt="Exam Portal"> -->
+      <img src="{% static 'img/tr.png' %}" alt=" Mmkay">
+    </div>
+  </div>
+</body>
+
+</html>
