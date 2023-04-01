@@ -45,12 +45,13 @@ class Stu_Question(Question_DB):
 
 
 class StuExam_DB(models.Model):
-    student = models.ForeignKey(User, limit_choices_to={'groups__name': "Student"}, on_delete=models.CASCADE, null=True)
     examname = models.CharField(max_length=100)
-    qpaper = models.ForeignKey(Question_Paper, on_delete=models.CASCADE, null=True)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    qpaper = models.ForeignKey(Question_Paper, on_delete=models.CASCADE)
     questions = models.ManyToManyField(Stu_Question)
-    score = models.IntegerField(default=0)
     completed = models.IntegerField(default=0)
+    score = models.FloatField(default=0)
+    random_questions = models.ManyToManyField(Question_DB,related_name='random_questions_set')
 
     def __str__(self):
         return str(self.student.username) +" " + str(self.examname) + " " + str(self.qpaper.qPaperTitle) + "-StuExam_DB"

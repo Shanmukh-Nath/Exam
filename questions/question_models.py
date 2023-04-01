@@ -13,11 +13,19 @@ class Question_DB(models.Model):
     optionC = models.CharField(max_length=100)
     optionD = models.CharField(max_length=100)
     answer = models.CharField(max_length=200)
-    max_marks = models.IntegerField(default=0)
+    max_marks = models.IntegerField(default=1)
     programming_code = models.TextField(blank=True, null=True)
+    tag=models.CharField(default='python',max_length=300)
 
     def __str__(self):
-        return f'Question No.{self.qno}: {self.question} \n\tOptions: \n\tA. {self.optionA} \n\tB. {self.optionB} \n\tC. {self.optionC} \n\tD. {self.optionD} \n\tProgramming Code: \n\t{self.programming_code}'
+        return f'Question No.{self.qno}: {self.question} \n\tOptions: \n\tA. {self.optionA} \n\tB. {self.optionB} \n\tC. {self.optionC} \n\tD. {self.optionD} \n\tProgramming Code: \n\t{self.programming_code} \n\tTag: \n\t{self.tag}'
+
+
+class RandomQuestion(models.Model):
+    student = models.ForeignKey(User, limit_choices_to={'groups__name': "Student"}, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question_DB, on_delete=models.CASCADE)
+    order = models.IntegerField()
+    choice = models.CharField(max_length=50,default='E')
 
 
 class QForm(ModelForm):

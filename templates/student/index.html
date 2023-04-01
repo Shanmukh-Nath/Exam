@@ -2,7 +2,7 @@
 {% block body %}
 
     <script>
-    onload(document.documentElement.requestFullscreen());
+    window.onload(document.documentElement.requestFullscreen());
     console.log("HI")
     </script>
     <style>
@@ -97,13 +97,13 @@
       <a href="{% url 'view_exams_student' %}">
         <div class="cards">
           <h1>Exams</h1>
-          <h2>This is the page where you can view your upcoming exams.</h2>
+          <h2>View your Exams.</h2>
         </div>
       </a>
       <a href="https:\\compiler.pythonanywhere.com" target="_blank" rel="noopener noreferrer">
         <div class="cards">
           <h1>Compiler</h1>
-          <h2>This is the page where you can Compiler and execute your python code.</h2>
+          <h2>The page where you can Compile and execute your python code.</h2>
         </div>
       </a>
       <a href="{% url 'email-student-pref' %}">

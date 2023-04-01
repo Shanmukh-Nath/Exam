@@ -119,7 +119,17 @@ codeEditors.forEach(function(editor) {
                 }
             });
             });
-
+        window.onbeforeunload = function() {
+  return "Are you sure you want to leave this page?";
+};
+            document.addEventListener('contextmenu', event => event.preventDefault());
+            document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    // user has exited fullscreen, activate mail function
+    // call your mail function here
+      mail();
+  }
+});
             function mail(){
                 var professorname = document.getElementById("professorname").value;
                 fetch(`/student/cheat/${professorname}`,{

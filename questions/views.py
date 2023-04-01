@@ -1,5 +1,7 @@
 import random
 
+from django.db.models import Window, F
+from django.db.models.functions import RowNumber
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from .models import *
@@ -8,39 +10,41 @@ from student.models import *
 from django.utils import timezone
 from student.models import StuExam_DB,StuResults_DB
 from questions.questionpaper_models import QPForm
-from questions.question_models import QForm
+from questions.question_models import QForm,RandomQuestion
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
-
+from . import models
 from django.shortcuts import render
 from django.utils import timezone
 from random import sample
 
 
+
+
 def generate_paper(request):
-    form = QuestionPaperForm(request.POST or None)
-    if form.is_valid():
-        tag1_count = int(form.cleaned_data.get('tag1_count'))
-        tag2_count = int(form.cleaned_data.get('tag2_count'))
-        tag3_count = int(form.cleaned_data.get('tag3_count'))
-        tag4_count = int(form.cleaned_data.get('tag4_count'))
-        tag5_count = int(form.cleaned_data.get('tag5_count'))
-        total_count = tag1_count + tag2_count + tag3_count + tag4_count + tag5_count
-        if total_count == 0:
-            form.add_error(None, "Please select at least one question")
-        elif total_count > 20:
-            form.add_error(None, "Total questions should not exceed 20")
-        else:
-            tag_counts = [tag1_count, tag2_count, tag3_count, tag4_count, tag5_count]
-            question_paper = QuestionPaper.objects.create(created_at=timezone.now())
-            for tag, count in zip(['tag1', 'tag2', 'tag3', 'tag4', 'tag5'], tag_counts):
-                tag_questions = Question.objects.filter(tag=tag)
-                selected_questions = sample(list(tag_questions), count)
-                for question in selected_questions:
-                    QuestionInPaper.objects.create(question=question, paper=question_paper)
-            return render(request, 'exam/addquestionpaper.html', {'question_paper': question_paper})
-    return render(request, 'faculty/index.html', {'form': form})
+    student = request.user
+    if request.method == 'GET':
+        ques1 = Question_DB.objects.all()
+        tags = ques1.values('tag').distinct()
+        print(tags.values('tag'))
+        ques = []
+        for tag in tags:
+            x = random.randint(1, 24)
+            y = x + 4
+            que = Question_DB.objects.filter(tag=tag['tag']).annotate(row_num=Window(expression=RowNumber())).order_by(
+                'qno')[x:y]
+            ques += que
+        random.shuffle(ques)
+
+        # Create instances of RandomQuestion for each randomly generated question
+        for i, q in enumerate(ques):
+            rq = RandomQuestion(student=student, question=q, order=i)
+            rq.save()
+
+        return ques
+
+
 
 
 def has_group(user, group_name):
@@ -240,8 +244,18 @@ def appear_exam(request, id):
         time = time.split(":")
         mins = time[0]
         secs = time[1]
-        ques = list(exam.question_paper.questions.all())
-        random.shuffle(ques)
+        '''ques1 = exam.question_paper.questions.all()
+        tags = ques1.values('tag').distinct()
+        print(tags.values('tag'))
+        ques=[]
+        for tag in tags:
+            que = Question_DB.objects.filter(tag=tag['tag']).annotate(row_num=Window(expression=RowNumber())).order_by('qno')
+            que = [q for q in que if q.row_num <= 4]
+            que = sample(que, min(len(que), 4))
+
+            ques+=que
+        random.shuffle(ques)'''
+        ques = generate_paper(request)
         context = {
             "exam": exam,
             "question_list": ques,
@@ -250,52 +264,32 @@ def appear_exam(request, id):
         }
         return render(request, 'exam/giveExam.html', context)
     if request.method == 'POST':
-        student = User.objects.get(username=request.user.username)
+        student = request.user
         paper = request.POST['paper']
         examMain = Exam_Model.objects.get(name=paper)
-        stuExam = StuExam_DB.objects.get_or_create(examname=paper, student=student, qpaper=examMain.question_paper)[0]
+        stuExam = StuExam_DB.objects.get_or_create(examname=paper,student=student,qpaper_id=examMain.question_paper.id)[0]
+        random_questions = RandomQuestion.objects.filter(student=student)
+        exam_score = 0
 
-        qPaper = examMain.question_paper
-        stuExam.qpaper = qPaper
+        #print(request.POST)
+        for random_question in random_questions:
+            choice = request.POST.get(str(random_question.question.question),False)
+            print(choice)
+            if not choice:
+                choice='E'
+            if choice.lower() == random_question.question.answer.lower():
+                exam_score+=random_question.question.max_marks
+            random_question.choice=choice
+            random_question.save()
+            print(exam_score)
 
-        qPaperQuestionsList = examMain.question_paper.questions.all()
-        for ques in qPaperQuestionsList:
-            student_question = Stu_Question(student=student, question=ques.question, optionA=ques.optionA,
-                                            optionB=ques.optionB, optionC=ques.optionC, optionD=ques.optionD,
-                                            answer=ques.answer)
-            student_question.save()
-            stuExam.questions.add(student_question)
-            stuExam.save()
-
+        stuExam.score = exam_score
         stuExam.completed = 1
         stuExam.save()
-        examQuestionsList = \
-        StuExam_DB.objects.filter(student=request.user, examname=paper, qpaper=examMain.question_paper,
-                                  questions__student=request.user)[0]
-        # examQuestionsList = stuExam.questions.all()
-        examScore = 0
-        list_i = examMain.question_paper.questions.all()
-        queslist = examQuestionsList.questions.all()
-        i = 0
-        for j in range(list_i.count()):
-            ques = queslist[j]
-            max_m = list_i[i].max_marks
-            ans = request.POST.get(ques.question, False)
-            if not ans:
-                ans = "E"
-            ques.choice = ans
-            ques.save()
-            if ans.lower() == ques.answer.lower() or ans == ques.answer:
-                examScore = examScore + max_m
-            i += 1
 
-        stuExam.score = examScore
-        stuExam.save()
-        stu = StuExam_DB.objects.filter(student=request.user, examname=examMain.name)
-        results = StuResults_DB.objects.get_or_create(student=request.user)[0]
-        results.exams.add(stu[0])
-        results.save()
         return redirect('view_exams_student')
+
+
 
 
 def next_question(request, id, current_question_index):
