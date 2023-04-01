@@ -5,7 +5,7 @@ from django import forms
 
 class Question_DB(models.Model):
     professor = models.ForeignKey(User, limit_choices_to={'groups__name': "Professor"}, on_delete=models.CASCADE,
-                                  null=True)
+                                  null=True,default=22)
     qno = models.AutoField(primary_key=True)
     question = models.CharField(max_length=100000000)
     optionA = models.CharField(max_length=100)

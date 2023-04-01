@@ -22,19 +22,25 @@ from random import sample
 
 
 
-def generate_paper(request):
+def generate_paper(request,id):
     student = request.user
     if request.method == 'GET':
-        ques1 = Question_DB.objects.all()
+        exam_id = id
+        exam = Exam_Model.objects.get(id=exam_id)
+        qpaper = exam.question_paper
+        prof_id = qpaper.professor
+        ques1 = Question_DB.objects.exclude(professor_id=prof_id)
         tags = ques1.values('tag').distinct()
         print(tags.values('tag'))
         ques = []
         for tag in tags:
-            x = random.randint(1, 24)
+            length = len(Question_DB.objects.filter(tag=tag['tag']).annotate(row_num=Window(expression=RowNumber())).order_by('qno'))
+            x = random.randint(1, length-6)
             y = x + 4
             que = Question_DB.objects.filter(tag=tag['tag']).annotate(row_num=Window(expression=RowNumber())).order_by(
                 'qno')[x:y]
-            ques += que
+            if not que in ques:
+                ques += que
         random.shuffle(ques)
 
         # Create instances of RandomQuestion for each randomly generated question
@@ -255,7 +261,7 @@ def appear_exam(request, id):
 
             ques+=que
         random.shuffle(ques)'''
-        ques = generate_paper(request)
+        ques = generate_paper(request,id)
         context = {
             "exam": exam,
             "question_list": ques,

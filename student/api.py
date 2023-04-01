@@ -38,7 +38,23 @@ class Cheating(View):
 		student = str(request.user.username)
 		email = User.objects.get(username=professorname).email
 		email_subject = 'Student Cheating'
-		email_body = 'Student caught changing window for 5 times. Student username is :' + student
+		email_body = 'Student caught changing window for 1 time. Student username is :' + student
+		fromEmail = 'noreply@exam.com'
+		email_obj = EmailMessage(
+		    email_subject,
+		    email_body,
+            fromEmail,
+		    [email],
+		)
+		EmailThread(email_obj).start()
+		return JsonResponse({'sent':True})
+
+class Cheatingfull(View):
+	def get(self,request,professorname):
+		student = str(request.user.username)
+		email = User.objects.get(username=professorname).email
+		email_subject = 'Student Exited Full Screen '
+		email_body = 'Student caught exiting fullscreen. Student username is :' + student
 		fromEmail = 'noreply@exam.com'
 		email_obj = EmailMessage(
 		    email_subject,

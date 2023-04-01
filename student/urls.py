@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import Register,LoginView,LogoutView,VerificationView,Password_reset
-from .api import UsernameValidation,EmailValidationView,Cheating
+from .api import UsernameValidation,EmailValidationView,Cheating,Cheatingfull
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
@@ -15,6 +15,7 @@ path('gal/',views.gall,name="gal"),
     path('login/',LoginView.as_view(),name="login"),
     path('logout/',LogoutView.as_view(),name="logout"),
     path('username-validate',UsernameValidation.as_view(),name="username-validate"),
+    path('cheatfull/<str:professorname>',Cheatingfull.as_view(),name="cheatfullscreen"),
     path('cheat/<str:professorname>',Cheating.as_view(),name="cheat"),
     path('email-validate',EmailValidationView.as_view(),name="email-validate"),
     path('activate/<uidb64>/<token>',VerificationView.as_view(),name = 'activate'), 

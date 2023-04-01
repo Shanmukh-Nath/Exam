@@ -33,7 +33,7 @@
   line-height: 1.4em;
   height: auto;
   min-height: 150px;
-  max-height: 500px;
+  max-height: 800px;
   width: auto;
   resize: none;
   overflow-y: auto;
@@ -62,6 +62,13 @@ codeEditors.forEach(function(editor) {
         </h5>
         <h5>
             <a>Time left : <a id="dmin">{{ min }}</a> mins <a id="dsec">{{ sec }}</a> seconds</a>
+        </h5>
+
+        <h5><b>
+            1. Donot Exit the Fullscreen till the time runs out.
+            2. Try to answer all the questions in Time.
+            3. Do not try Open another tabs, if caught the exam will be cancelled.
+        </b>
         </h5>
         <form method="POST" id="examform">
             {% csrf_token %}
@@ -119,17 +126,48 @@ codeEditors.forEach(function(editor) {
                 }
             });
             });
+        //window.onbeforeunload = function() {
+        //    var msg = "Are You Sure ? The exam will be Submitted."
+        //    if(confirm(msg)){
+        //        document.getElementById('examform').submit();
+        //    }
+        //    else{
+        //        return false;
+        //    }
+
+
+//};
         window.onbeforeunload = function() {
-  return "Are you sure you want to leave this page?";
+     var msg =  "Are you sure you want to leave this page?";
+     if(confirm(msg)){
+         submitFormOkay = true;
+     }
+     else{
+         return false;
+     }
+
 };
             document.addEventListener('contextmenu', event => event.preventDefault());
             document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement) {
     // user has exited fullscreen, activate mail function
     // call your mail function here
-      mail();
+      mail1();
   }
 });
+
+            function mail1(){
+                var professorname = document.getElementById("professorname").value;
+                fetch(`/student/cheatfull/${professorname}`,{
+                    method:"GET",
+                    credentials: "same-origin",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                })
+            }
             function mail(){
                 var professorname = document.getElementById("professorname").value;
                 fetch(`/student/cheat/${professorname}`,{
