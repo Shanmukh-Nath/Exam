@@ -43,6 +43,13 @@ class Stu_Question(Question_DB):
     def __str__(self):
         return str(self.student.username) + " "+ str(self.qno) +"-Stu_QuestionDB"
 
+class Tag_score(models.Model):
+    student = models.ForeignKey(User,on_delete=models.CASCADE)
+    python = models.IntegerField(default=0)
+    web = models.IntegerField(default=0)
+    ml = models.IntegerField(default=0)
+    dsa = models.IntegerField(default=0)
+    dbms = models.IntegerField(default=0)
 
 class StuExam_DB(models.Model):
     examname = models.CharField(max_length=100)

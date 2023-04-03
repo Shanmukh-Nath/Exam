@@ -31,16 +31,28 @@ def generate_paper(request,id):
         prof_id = qpaper.professor
         ques1 = Question_DB.objects.exclude(professor_id=prof_id)
         tags = ques1.values('tag').distinct()
+
         print(tags.values('tag'))
         ques = []
-        for tag in tags:
+        '''for tag in tags:
             length = len(Question_DB.objects.filter(tag=tag['tag']).annotate(row_num=Window(expression=RowNumber())).order_by('qno'))
             x = random.randint(1, length-6)
-            y = x + 4
+            y = x + 20
             que = Question_DB.objects.filter(tag=tag['tag']).annotate(row_num=Window(expression=RowNumber())).order_by(
                 'qno')[x:y]
             if not que in ques:
-                ques += que
+                ques += que'''
+        length = len(Question_DB.objects.all())
+        print(length)
+        for i in range(1, length):
+            x = random.randint(1, length - 6)
+            y = x + 15
+            que = Question_DB.objects.all().order_by('qno')[x:y]
+            if not que in ques:
+                ques+=que
+            if len(que):
+                break
+
         random.shuffle(ques)
 
         # Create instances of RandomQuestion for each randomly generated question
